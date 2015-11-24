@@ -1,0 +1,22 @@
+{
+  "name": "dateTimeUtils",
+  "homepage": "https://github.com/pioneer32/dateTimeUtils",
+  "authors": [
+    "Vladislav Churakov <pioneer32@mail.ru>"
+  ],
+  "description": "Huge collection of functions for dates and times converting",
+  "main": "dateTimeUtils.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
