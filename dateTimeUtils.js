@@ -51,7 +51,7 @@
 	"use strict";
 
 	var
-		name_   = 'dateUtils'
+		name_   = 'dateTimeUtils'
 		, deps_ = [ /*Dependencies*/ ]
 		;
 
