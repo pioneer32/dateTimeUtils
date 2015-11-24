@@ -1,0 +1,22 @@
+{
+  "name": "datetimeutils",
+  "version": "0.0.3",
+  "description": "Huge collection of functions for dates and times converting",
+  "main": "dateTimeUtils.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pioneer32/dateTimeUtils.git"
+  },
+  "author": "Vladislav Churakov <pioneer32@mail.ru>",
+  "contributors": [
+	"Vladislav Churakov <pioneer32@mail.ru>"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pioneer32/dateTimeUtils/issues"
+  },
+  "homepage": "https://github.com/pioneer32/dateTimeUtils#readme"
+}
