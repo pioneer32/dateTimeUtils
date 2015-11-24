@@ -5,6 +5,7 @@
     "Vladislav Churakov <pioneer32@mail.ru>"
   ],
   "description": "Huge collection of functions for dates and times converting",
+  "version": "0.0.3",
   "main": "dateTimeUtils.js",
   "moduleType": [
     "amd",
