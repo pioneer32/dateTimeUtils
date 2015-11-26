@@ -4,7 +4,7 @@
   "description": "Huge collection of functions for dates and times converting",
   "main": "dateTimeUtils.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/test.js"
   },
   "repository": {
     "type": "git",
@@ -12,11 +12,14 @@
   },
   "author": "Vladislav Churakov <pioneer32@mail.ru>",
   "contributors": [
-	"Vladislav Churakov <pioneer32@mail.ru>"
+    "Vladislav Churakov <pioneer32@mail.ru>"
   ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pioneer32/dateTimeUtils/issues"
   },
-  "homepage": "https://github.com/pioneer32/dateTimeUtils#readme"
+  "homepage": "https://github.com/pioneer32/dateTimeUtils#readme",
+  "devDependencies": {
+    "mocha": "^2.3.4"
+  }
 }
