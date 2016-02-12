@@ -30,13 +30,16 @@
  *
  *  √ minutesToISO_HM: Number of minutes from begin of day -> "10:00"
  *
- *  DateToJD:  Date -> Number of Julian Day
+ *  DateToJD:       Date -> Number of Julian Day
+ *  DateToADMonth:  Date -> Number of the month in AD (Anno Domini or A.D.)
  *
- *  JDtoDate:      Number of Julian Day -> Date (new or mutate)
- *  JDtoISO_YMD:   Number of Julian Day -> "2015-01-26"
- *  √ JDtoYMD:     Number of Julian Day -> [ year, month, day ]
- *  √ JDtoADMonth: Number of Julian Day -> Number of the month in AD (Anno Domini or A.D.)
- *  √ JDtoISO_YW:  Number of Julian Day -> "2015-W05"
+ *  JDtoDate:       Number of Julian Day -> Date (new or mutate)
+ *  JDtoISO_YMD:    Number of Julian Day -> "2015-01-26"
+ *  JDtoISO_YM:     Number of Julian Day -> "2015-01"
+ *  JDtoWeekNumber: Number of Julian Day -> Number of ISO8601 week in year
+ *  √ JDtoYMD:      Number of Julian Day -> [ year, month, day ]
+ *  √ JDtoADMonth:  Number of Julian Day -> Number of the month in AD (Anno Domini or A.D.)
+ *  √ JDtoISO_YW:   Number of Julian Day -> "2015-W05"
  *
  *  DateToISO_YMD:   Date -> "2015-01-26"
  *  DateToISO_HM:    Date -> "10:00"
@@ -57,7 +60,13 @@
 
 	function factory_ ( /*Dependencies*/ ) {
 
-		var YMDtoDayOfWeek, YMDtoJD, YWDoWtoJD, HMtoMinutes, HMStoSeconds, ISOtoADMonth, ADMonthToISO_YM, ADMonthToJD, YDMtoISO_YW, JDtoYMD;
+		var
+			YMDtoDayOfWeek, YMDtoJD, YWDoWtoJD, YDMtoISO_YW, YMDtoWeekNumber
+			, HMtoMinutes, HMStoSeconds
+			, ISOtoADMonth
+			, ADMonthToISO_YM, ADMonthToJD
+			, JDtoYMD
+			;
 
 		/**
 		 * Returns [ year, number of ISO8601 week, number of day in week ]
@@ -115,6 +124,17 @@
 		};
 
 		/**
+		 * Number of Julian Day -> Number of ISO8601 week in year
+		 *
+		 * @param {number} JD
+		 * @return {number}
+		 * @constructor
+		 */
+		exports.JDtoWeekNumber = function ( JD ) {
+			return YMDtoWeekNumber.apply( null, JDtoYMD( JD ) );
+		};
+
+		/**
 		 *	Returns number of Julian Day
 		 *  http://en.wikipedia.org/wiki/Julian_day
 		 *
@@ -137,7 +157,7 @@
 		 *
 		 *	@param {number} year    - number of year (i.e. 2012)
 		 *	@param {number} week    - number of ISO8601 week
-		 *	@param {number} [dow=1] - number of day of week (1 - Mon, 2 - Tue, ... 7 - Sun)
+		 *	@param {number} [dow=1] - number of week day (1 - Mon, 2 - Tue, ... 7 - Sun)
 		 *	@return {number}
 		 */
 		exports.YWDoWtoJD = YWDoWtoJD = function ( year, week, dow ) {
@@ -151,7 +171,7 @@
 		/**
 		 *	Converts date in ISO8601 format to number of Julian Day
 		 *
-		 *	@param {string} ISODate - supported formats: "2015-W05-2T...", "2015-W05-2", "2015-W05", "2015-01-26T...", "2015-01-26", "2015-01", "2015"
+		 *	@param {string} ISODate, supported formats: "2015-W05-2T...", "2015-W05-2", "2015-W05", "2015-01-26T...", "2015-01-26", "2015-01", "2015"
 		 *	@return {number}
 		 */
 		exports.ISOtoJD = function ( ISODate ) {
@@ -181,6 +201,16 @@
 		};
 
 		/**
+		 *	Converts Date object to number of the month in AD (Anno Domini or A.D.)
+		 *
+		 *	@param {Date} date
+		 *	@return {number}
+		 */
+		exports.DateToADMonth = function ( date ) {
+			return date.getFullYear() * 12 + date.getMonth();
+		};
+
+		/**
 		 * Extracts year, month and may from Julian Day and applies they to Data object (if date isn't provided new object Date will be created)
 		 *
 		 * @param {number} JD   - number of Julian Day
@@ -200,7 +230,7 @@
 		};
 
 		/**
-		 * Gets ISO8601 date "YYYY-MM-DD" from Date object
+		 * Converts Data object to ISO8601 date "YYYY-MM-DD"
 		 *
 		 * @param {Date} date - Date object
 		 * @return {string}
@@ -210,7 +240,7 @@
 		};
 
 		/**
-		 * Gets ISO8601 time "HH:MM" from Date object
+		 * Converts Data object to ISO8601 date "HH:MM"
 		 *
 		 * @param {Date} date
 		 * @return {string}
@@ -220,7 +250,7 @@
 		};
 
 		/**
-		 * Gets ISO8601 time "HH:MM:SS" from Date object
+		 * Converts Data object to ISO8601 date "HH:MM:SS"
 		 *
 		 * @param {Date} date - Date object
 		 * @return {string}
@@ -230,7 +260,7 @@
 		};
 
 		/**
-		 * Converts number of Julian Day to ISO8601 date "YYYY-MM-DD"
+		 * Converts Julian Day to ISO8601 date "YYYY-MM-DD"
 		 *
 		 * @param {number} JD - number of Julian Day
 		 * @return {string}
@@ -241,7 +271,18 @@
 		};
 
 		/**
-		 * Converts number of Julian Day to ISO8601 date "YYYY-WWW"
+		 * Converts Julian Day to ISO8601 date "YYYY-MM"
+		 *
+		 * @param {number} JD - number of Julian Day
+		 * @return {string}
+		 */
+		exports.JDtoISO_YM = function ( JD ) {
+			var ymd = JDtoYMD( JD );
+			return ymd[ 0 ] + '-' + pad_( ymd[ 1 ] );
+		};
+
+		/**
+		 * Converts Julian Day to ISO8601 date "YYYY-WWW"
 		 *
 		 * @param {number} JD - number of Julian Day
 		 * @return {string}
@@ -258,11 +299,11 @@
 		 */
 		exports.JDtoADMonth = function ( JD ) {
 			var d = JDtoYMD( JD );
-			return d[ 0 ] * 12 + d[ 1 ];
+			return d[ 0 ] * 12 + d[ 1 ] - 1;
 		};
 
 		/**
-		 * Returns ISO8601 string "YYYY-WWW"
+		 * Converts year, month and day to ISO8601 string YYYY-WWW
 		 *
 		 * @param {number} year  - number of year (i.e. 2012)
 		 * @param {number} month - number of month (1 - january ... 12 - december)
@@ -275,7 +316,7 @@
 		};
 
 		/**
-		 * Returns ISO8601 string "YYYY-WWW-DD"
+		 * Converts year, month and day to ISO8601 string YYYY-WWW-DD
 		 *
 		 * @param {number} year  - number of year (i.e. 2012)
 		 * @param {number} month - number of month (1 - january ... 12 - december)
@@ -288,19 +329,19 @@
 		};
 
 		/**
-		 * Returns ISO8601 week number
+		 * Converts year, month and day to ISO8601 week number
 		 *
 		 * @param {number} year  - number of year (i.e. 2012)
 		 * @param {number} month - number of month (1 - january ... 12 - december)
 		 * @param {number} day   - number of day in month (1...31)
 		 * @return {number}
 		 */
-		exports.YMDtoWeekNumber = function ( year, month, day ) {
+		exports.YMDtoWeekNumber = YMDtoWeekNumber = function ( year, month, day ) {
 			return YMDtoYWd_( year, month, day )[ 1 ];
 		};
 
 		/**
-		 * Returns number of day of week (1 - Mon, 2 - Tue, ... 7 - Sun)
+		 * Returns number of week day (1 - Mon, 2 - Tue, ... 7 - Sun)
 		 *
 		 * @param {number} year  - number of year (i.e. 2012)
 		 * @param {number} month - number of month (1 - january ... 12 - december)
@@ -317,7 +358,17 @@
 		};
 
 		/**
-		 * Returns number of day of week (1 - Mon, 2 - Tue, ... 7 - Sun)
+		 * Returns number of week day of  (1 - Mon, 2 - Tue, ... 7 - Sun)
+		 *
+		 * @param {number} JD - number of Julian Day
+		 * @returns {number}
+		 */
+		exports.JDtoDayOfWeek = function ( JD ) {
+			return YMDtoDayOfWeek.apply( null, JDtoYMD( JD ) );
+		};
+
+		/**
+		 * Returns number of week day (1 - Mon, 2 - Tue, ... 7 - Sun)
 		 *
 		 * @param {string} YYMMDD - ISO8601 date string "YYYY-MM-DD"
 		 * @return {number}
@@ -327,7 +378,6 @@
 		};
 
 		/**
-		 * Returns minutes from begin of day
 		 *
 		 * @param {Date} date - Date object
 		 * @return {number}
@@ -337,7 +387,7 @@
 		};
 
 		/**
-		 * Returns minutes from begin of day
+		 * Converts hours+minutes to minutes from begin of day
 		 *
 		 * @param {number} hours       - number of an hour (0..23)
 		 * @param {number} [minutes=0]
@@ -348,7 +398,7 @@
 		};
 
 		/**
-		 * Returns seconds from begin of day
+		 * Converts hours+minutes+seconds to seconds from begin of day
 		 *
 		 * @param {number} hours       - number of an hour (0..23)
 		 * @param {number} [minutes=0]
@@ -407,8 +457,9 @@
 		 */
 		exports.ISOtoADMonth = ISOtoADMonth = function ( YM ) {
 			var s = YM.split( '-' ).map( Number );
-			return s[ 0 ] * 12 + ( s[ 1 ] || 1 );
+			return s[ 0 ] * 12 + ( s[ 1 ] || 1 ) - 1;
 		};
+
 		/**
 		 * @deprecated just for back-compatibility
 		 */
@@ -421,9 +472,9 @@
 		 * @return {number}
 		 */
 		exports.ADMonthToISO_YM = ADMonthToISO_YM = function ( adMonth ) {
-			var m = adMonth % 12;
-			return m ? ( adMonth / 12 >> 0 ) + '-' + pad_( adMonth % 12 ) : ( adMonth / 12 >> 0 ) - 1 + '-12';
+			return ( adMonth / 12 >> 0 ) + '-' + pad_( adMonth % 12 + 1 );
 		};
+
 		/**
 		 * @deprecated just for back-compatibility
 		 */
@@ -436,9 +487,9 @@
 		 * @return {number}
 		 */
 		exports.ADMonthToJD = ADMonthToJD = function ( adMonth ) {
-			var m = adMonth % 12;
-			return m ? YMDtoJD( adMonth / 12 >> 0, adMonth % 12, 1 ) : YMDtoJD( ( adMonth / 12 >> 0 ) - 1, 12, 1 );
+			return YMDtoJD( adMonth / 12 >> 0, adMonth % 12 + 1, 1 );
 		};
+
 		/**
 		 * @deprecated just for back-compatibility
 		 */
@@ -449,12 +500,11 @@
 	if ( 'define' in global && define.amd ) { // AMD, amdjs, RequireJS and etc
 		define( name_, deps_, factory_ );
 	} else if ( !global.SP && typeof require === 'function' ) { // Node (commonJS) or Browserify
-		factory_.apply( global, deps_.map( require ) );
+		module.exports = factory_.apply( global, deps_.map( require ) ) || exports;
 	} else { // Glued into bundle...
-		global.SP[ name_ ] = exports;
-		factory_.apply( global, deps_.map( function ( dep ) {
-			if ( !this[ dep ] ) throw new TypeError( 'SP.' + dep + ' is undefined' );
-			return this[ dep ];
-		}, global.SP ) );
+		global[ name_ ] = factory_.apply( global, deps_.map( function ( dep ) {
+				if ( !this[ dep ] ) throw new TypeError( dep + ' is undefined' );
+				return this[ dep ];
+			}, global.SP ) ) || exports;
 	}
 } )( typeof self === "undefined" ? typeof global === "undefined" ? this : global : self, typeof module === 'object' && module.exports || typeof exports === 'object' && exports || {} );
